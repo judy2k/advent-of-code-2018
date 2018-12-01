@@ -13,4 +13,4 @@ def first_seen_frequency(path):
         seen_frequencies.add(frequency)
 
 
-print(first_seen_frequency("input.txt"))
+print(first_seen_frequency("../input.txt"))
