@@ -23,7 +23,9 @@ struct Frequencies {
 impl Frequencies {
     fn new(changes: Vec<i32>) -> Frequencies {
         Frequencies {
-            current: 0, changes, next_change: 0
+            current: 0,
+            changes,
+            next_change: 0,
         }
     }
 }
@@ -33,7 +35,7 @@ impl Iterator for Frequencies {
     fn next(&mut self) -> Option<i32> {
         let result = self.current;
         self.current += self.changes[self.next_change];
-        self.next_change  = (self.next_change + 1) % self.changes.len();
+        self.next_change = (self.next_change + 1) % self.changes.len();
         Some(result)
     }
 }
