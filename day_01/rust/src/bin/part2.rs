@@ -4,39 +4,15 @@ use std::io;
 use std::io::prelude::*;
 
 fn main() {
+    let mut current_val = 0;
     let mut seen_vals = HashSet::new();
-    for frequency in Frequencies::new(changes("../input.txt").expect("error")) {
-        if seen_vals.contains(&frequency) {
-            println!("{}", frequency);
+    for change in changes("../input.txt").expect("error").iter().cycle() {
+        if seen_vals.contains(&current_val) {
+            println!("{}", current_val);
             break;
         }
-        seen_vals.insert(frequency);
-    }
-}
-
-struct Frequencies {
-    current: i32,
-    changes: Vec<i32>,
-    next_change: usize,
-}
-
-impl Frequencies {
-    fn new(changes: Vec<i32>) -> Frequencies {
-        Frequencies {
-            current: 0,
-            changes,
-            next_change: 0,
-        }
-    }
-}
-
-impl Iterator for Frequencies {
-    type Item = i32;
-    fn next(&mut self) -> Option<i32> {
-        let result = self.current;
-        self.current += self.changes[self.next_change];
-        self.next_change = (self.next_change + 1) % self.changes.len();
-        Some(result)
+        seen_vals.insert(current_val);
+        current_val += change;
     }
 }
 
