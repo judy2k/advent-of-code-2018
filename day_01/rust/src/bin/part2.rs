@@ -23,13 +23,13 @@ fn int_file(path: &str) -> Result<Vec<i32>, io::Error> {
 
 fn calculate_result(path: &str) -> Result<i32, io::Error> {
     let mut seen_vals = HashSet::new();
-    for current_val in int_file(path)?.into_iter().cycle().aggregate() {
-        if seen_vals.contains(&current_val) {
-            return Ok(current_val);
+    for frequency in vec!(0 as i32).into_iter().chain(int_file(path)?.into_iter().cycle()).aggregate() {
+        if seen_vals.contains(&frequency) {
+            return Ok(frequency);
         }
-        seen_vals.insert(current_val);
+        seen_vals.insert(frequency);
     }
-    Ok(-1)
+    panic!("Should never reach this point")
 }
 
 
