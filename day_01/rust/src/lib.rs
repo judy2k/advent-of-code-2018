@@ -22,11 +22,11 @@ where
 }
 
 pub trait AggregateTrait {
-    fn aggregate(self, acc: i32) -> AggregateIterator<Self>
+    fn aggregate(self) -> AggregateIterator<Self>
     where
         Self: Sized + Iterator<Item = i32>,
     {
-        AggregateIterator { iter: self, acc }
+        AggregateIterator { iter: self, acc: 0 }
     }
 }
 
@@ -40,6 +40,6 @@ where
 fn test_aggregate() {
     let a: Vec<i32> = vec![1, 2, 3];
     let expected: Vec<i32> = vec![1, 3, 6];
-    let b = a.into_iter().aggregate(0).collect::<Vec<i32>>();
+    let b = a.into_iter().aggregate().collect::<Vec<i32>>();
     assert_eq!(b, expected)
 }

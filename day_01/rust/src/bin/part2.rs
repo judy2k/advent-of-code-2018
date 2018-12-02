@@ -1,26 +1,14 @@
+extern crate day01;
+
 use std::collections::HashSet;
 use std::fs::File;
 use std::io;
 use std::io::prelude::*;
 
+use day01::AggregateTrait;
+
 fn main() {
-    let mut current_val = 0;
-    let mut seen_vals = HashSet::new();
-    match int_file("../input.txt") {
-        Ok(is) => {
-            for change in is.iter().cycle() {
-                if seen_vals.contains(&current_val) {
-                    println!("{}", current_val);
-                    break;
-                }
-                seen_vals.insert(current_val);
-                current_val += change;
-            }
-        },
-        Err(e) => {
-            println!("Error: {}", e);
-        },
-    }
+    println!("{}", calculate_result("../input.txt").unwrap())
 }
 
 fn int_file(path: &str) -> Result<Vec<i32>, io::Error> {
@@ -30,4 +18,23 @@ fn int_file(path: &str) -> Result<Vec<i32>, io::Error> {
         .map(Result::unwrap)
         .map(|s| s.parse::<i32>().unwrap())
         .collect::<Vec<i32>>())
+}
+
+
+fn calculate_result(path: &str) -> Result<i32, io::Error> {
+    let mut seen_vals = HashSet::new();
+    for current_val in int_file(path)?.into_iter().cycle().aggregate() {
+        if seen_vals.contains(&current_val) {
+            return Ok(current_val);
+        }
+        seen_vals.insert(current_val);
+    }
+    Ok(-1)
+}
+
+
+#[test]
+fn test_calculate_result() {
+    assert_eq!(calculate_result("../sample_input.txt").unwrap(), 2);
+    assert_eq!(calculate_result("../input.txt").unwrap(), 55250);
 }
