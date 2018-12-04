@@ -30,16 +30,12 @@ def guard_sleep_intervals(lines):
 
 
 def sleepiest_minute(intervals):
-    if not intervals:
-        return 0, 0
-    sleeping, waking = [Counter(ts) for ts in zip(*intervals)]
-    pairs = enumerate(
-        accumulate(
-            (sleeping.get(minute, 0) - waking.get(minute, 0)) for minute in range(60)
-        )
-    )
-    minute, count = max(pairs, key=itemgetter(1))
-    return minute, count
+    counter = Counter()
+    for sleep, wake in intervals:
+        counter.update({sleep: 1, wake: -1})
+    event_times = sorted(counter.keys())
+    sleep_counts = accumulate(counter.get(minute) for minute in event_times)
+    return max(zip(event_times, sleep_counts), key=itemgetter(1))
 
 
 def load_intervals(path):
