@@ -26,22 +26,24 @@ def guard_sleep_intervals(lines):
             current_guard = guard_id
         else:
             guards.setdefault(current_guard, []).append(ts)
-    return [(guard_id, pairs(timestamps)) for guard_id, timestamps in guards.items()]
+    return ((guard_id, pairs(timestamps)) for guard_id, timestamps in guards.items())
 
 
-def sleepiest_minute(intervals):
+def calculate(intervals):
     counter = Counter()
+    time_asleep = 0
     for sleep, wake in intervals:
         counter.update({sleep: 1, wake: -1})
+        time_asleep += wake - sleep
     event_times = sorted(counter.keys())
     sleep_counts = accumulate(counter.get(minute) for minute in event_times)
-    return max(zip(event_times, sleep_counts), key=itemgetter(1))
+    return (*max(zip(event_times, sleep_counts), key=itemgetter(1)), time_asleep)
 
 
 def load_intervals(path):
     lines = sorted(open(path, "r", encoding="utf-8").readlines())
     return [
-        (guard_id, *sleepiest_minute(intervals), sum((e - s) for s, e in intervals))
+        (guard_id, *calculate(intervals))
         for guard_id, intervals in guard_sleep_intervals(lines)
     ]
 
@@ -60,21 +62,6 @@ def main():
     all_sleep_intervals = load_intervals("../input.txt")
     print(solve(all_sleep_intervals))
     print(solve2(all_sleep_intervals))
-
-
-def test_parse_line():
-    assert parse_line("[1518-04-10 23:52] Guard #3559 begins shift") == (52, 3559)
-    assert parse_line("[1518-04-10 23:52] wakes up") == (52, None)
-
-
-def test_solve():
-    assert solve(load_intervals("../sample_input.txt")) == 240
-    assert solve(load_intervals("../input.txt")) == 87681
-
-
-def test_solve2():
-    assert solve2(load_intervals("../sample_input.txt")) == 4455
-    assert solve2(load_intervals("../input.txt")) == 136461
 
 
 if __name__ == "__main__":
