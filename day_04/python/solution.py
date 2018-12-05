@@ -26,17 +26,17 @@ def guard_sleep_intervals(lines):
             current_guard = guard_id
         else:
             guards.setdefault(current_guard, []).append(ts)
-    return ((guard_id, pairs(timestamps)) for guard_id, timestamps in guards.items())
+    return guards.items()
 
 
 def calculate(intervals):
-    counter = Counter()
+    events = Counter()
     time_asleep = 0
-    for sleep, wake in intervals:
-        counter.update({sleep: 1, wake: -1})
+    for sleep, wake in pairs(intervals):
+        events.update({sleep: 1, wake: -1})
         time_asleep += wake - sleep
-    event_times = sorted(counter.keys())
-    sleep_counts = accumulate(counter.get(minute) for minute in event_times)
+    event_times = sorted(events.keys())
+    sleep_counts = accumulate(events.get(minute) for minute in event_times)
     return (*max(zip(event_times, sleep_counts), key=itemgetter(1)), time_asleep)
 
 
